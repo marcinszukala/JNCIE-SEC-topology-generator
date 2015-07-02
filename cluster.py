@@ -20,6 +20,7 @@ class vsrx_cluster:
     self.zone_untrust = "reth0"
     self.zone_trust = ""
     self.zone_dmz = ""
+    self.hosts = []
     self.name = name
     self.location = location
     #print "%s %s" % (self.name, self.location)
@@ -75,18 +76,21 @@ for clustername in cluster_class_holder:
   hosts_network_reth2 = IPNetwork(cluster_class_holder[clustername].reth2["network"])
   hosts_network_reth3 = IPNetwork(cluster_class_holder[clustername].reth3["network"])
 
-  for i in range(randint(1,3)):
+  for i in range(1):
     key = "%s_reth1_%s" % (clustername, i)
     hostip = hosts_network_reth1[randint(10,30)]
     hosts_class_holder[key] = hosts(hostip, clustername)
-  for i in range(randint(1,3)):
+    cluster_class_holder[clustername].hosts.append(key)
+  for i in range(2):
     key = "%s_reth2_%s" % (clustername, i)
     hostip = hosts_network_reth2[randint(10,30)]
     hosts_class_holder[key] = hosts(hostip, clustername)
-  for i in range(randint(1,3)):
+    cluster_class_holder[clustername].hosts.append(key)
+  for i in range(1):
     key = "%s_reth3_%s" % (clustername, i)
     hostip = hosts_network_reth2[randint(10,30)]
     hosts_class_holder[key] = hosts(hostip, clustername)
+    cluster_class_holder[clustername].hosts.append(key)
 
 
 for clustername in cluster_class_holder:
@@ -101,6 +105,11 @@ for clustername in cluster_class_holder:
   print "Interfaces in zone untrust: %s" % cluster_class_holder[clustername].zone_untrust
   print "Interfaces in zone trust: %s" % cluster_class_holder[clustername].zone_trust
   print "Interfaces in zone dmz: %s" % cluster_class_holder[clustername].zone_dmz
- 
-for i in hosts_class_holder:
-  print "cluster: %s, host: %s, ip: %s, service: %s" % (hosts_class_holder[i].cluster, i, hosts_class_holder[i].ip, hosts_class_holder[i].services)
+
+#for host in hosts_class_holder:
+#  print "cluster: %s, host: %s, ip: %s, service: %s" % (hosts_class_holder[host].cluster, host, hosts_class_holder[host].ip, hosts_class_holder[host].services)
+
+hostnames = hosts_class_holder.keys()
+for host in hostnames:
+  print "Create policy from %s, ip %s to %s, ip %s, service %s" % (host, hosts_class_holder[host].ip, hostnames[-1], hosts_class_holder[hostnames[-1]].ip, hosts_class_holder[hostnames[-1]].services)
+  hostnames.pop()
